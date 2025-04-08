@@ -1,10 +1,13 @@
 # Tailscale Model Context Protocol (MCP) Server
 
-A simple MCP server that provides read-only access to your Tailscale network directly from Claude Desktop and other MCP-compatible clients.
+A simple [MCP](https://modelcontextprotocol.io/introduction) server that provides read-only access to your [Tailscale](https://tailscale.com/) network directly from Claude Desktop and other MCP-compatible clients.
+
+> [!CAUTION]
+> You might not want to do this! This server exposes your Tailscale network to an external application. While it is intended to be read-only and secure, you should be aware of the potential risks involved in exposing any part of your network to third-party applications. [Especially when interacting with LLMs](https://simonwillison.net/search/?tag=prompt-injection).
 
 ## Description
 
-This server allows Claude to securely interact with your Tailscale network by exposing read-only commands as tools and prompts. It enables you to:
+This server allows, for example, Claude to interact with your Tailscale network by exposing read-only commands as tools and prompts. It enables you to:
 
 - Check your Tailscale status and connected devices
 - Get network diagnostics
