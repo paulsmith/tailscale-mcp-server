@@ -42,7 +42,7 @@ Coming soon
 ### Building from Source
 
 ```bash
-go install github.com/paulsmith/tailscale-mcp@latest
+go install github.com/paulsmith/tailscale-mcp-server@latest
 ```
 
 ## Using with Claude Desktop
