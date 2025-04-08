@@ -60,13 +60,14 @@ go install github.com/paulsmith/tailscale-mcp-server@latest
 {
   "mcpServers": {
     "tailscale": {
-      "command": "/path/to/tailscale-mcp"
+      "command": "tailscale-mcp-server"
     }
   }
 }
 ```
 
-4. Replace `/path/to/tailscale-mcp` with the actual path to the binary
+4. Make sure `tailscale-mcp-server` is on your `$PATH`, or provide the full
+   path to the binary in the `command` field.
 
 5. Restart Claude Desktop
 
