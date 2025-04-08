@@ -117,6 +117,59 @@ Once connected to Claude Desktop, you can ask questions like:
 - "Are there any exit nodes available in my network?"
 - "What DNS settings is Tailscale using?"
 
+### Example Chat
+
+> Describe my tailnet and note anything out of the ordinary.
+
+```markdown
+I'll check your Tailscale network status and provide you with information about
+your tailnet. Let me run a few commands to gather the details.
+
+First, let's check the overall status of your tailnet:
+
+View result from get-status
+
+Now, let's get the Tailscale IP addresses:
+
+View result from get-ip
+
+Let's check the network connectivity status:
+
+View result from network-check
+
+Let's check for available exit nodes in your tailnet:
+
+View result from list-exit-nodes
+
+Let's also check the DNS status:
+
+View result from dns-status
+
+Based on all the information gathered, here's a description of your tailnet:
+
+Your tailnet is named "orca-arctic.ts.net" and currently has 11 devices
+registered, with 6 devices currently online and 5 offline. Your current device
+is "venus" running macOS with the IP address 100.86.102.37.
+
+Here's what I've observed about your tailnet:
+
+- You have one device ("bunny") configured as an exit node. This allows other devices to route their traffic through it.
+- There's a version mismatch between your client (1.80.3) and the tailscaled server (1.82.0), which could be worth updating to ensure compatibility and security.
+- You have a device named "hello.ts.net" with a different user account (hello@) compared to your other devices (paulsmith@). This might be unusual if you're not expecting another user in your tailnet.
+- Your network connectivity looks good with both IPv4 and IPv6 support, and you're using UPnP for port mapping.
+- Your nearest DERP (Designated Encrypted Relay for Packets) server is in Ashburn with a 71.9ms latency, which is quite good.
+- MagicDNS is enabled tailnet-wide, allowing you to reach devices by their hostname (e.g., venus.orca-arctic.ts.net).
+- You're using NextDNS as your DNS resolver, which is a custom configuration.
+
+Notable items that might need attention:
+
+- The client/server version mismatch mentioned above
+- The device "hello.ts.net" with a different user account (hello@) that might need verification if it's not expected
+- Five of your devices are currently offline, which is normal if they're not in use but worth checking if you expect them to be online
+
+Would you like me to provide more information about any specific aspect of your tailnet?
+```
+
 ## Security Notes
 
 - This server allows read-only access to your Tailscale network
