@@ -74,7 +74,7 @@ go install github.com/paulsmith/tailscale-mcp@latest
 
 The server exposes the following tools:
 
-- **tailscale**: Run any safe Tailscale command
+- **tailscale**: Run any "safe" Tailscale command
 - **get-ip**: Get your Tailscale IP addresses
 - **get-status**: Get information about your Tailscale network
 - **network-check**: Check Tailscale network connectivity
@@ -82,6 +82,21 @@ The server exposes the following tools:
 - **ip-lookup**: Look up information about a Tailscale IP
 - **ping-host**: Ping a Tailscale host
 - **dns-status**: Get DNS diagnostic information
+
+## The List of Safe Subcommands
+
+The list of subcommands that are considered "safe" and can be run through the
+`tailscale` tool that this MCP server uses are:
+
+- `netcheck`
+- `ip`
+- `dns status`
+- `status`
+- `metrics`
+- `ping <peer>`
+- `version`
+- `exit-node list`
+- `whois <ip>`
 
 ## Available Prompts
 
@@ -117,6 +132,7 @@ Once connected to Claude Desktop, you can ask questions like:
 ### Server not appearing in Claude Desktop
 
 Check the following:
+
 1. Make sure the path to the binary in your configuration is correct
 2. Verify Tailscale CLI is installed and accessible in your `$PATH`
 3. Check Claude Desktop logs for errors:
@@ -126,6 +142,7 @@ Check the following:
 ### Command errors
 
 If commands are failing, try:
+
 1. Running the command directly using the Tailscale CLI to verify it works
 2. Check that your Tailscale is correctly configured and connected
 3. Ensure the command is in the allowed safe list
