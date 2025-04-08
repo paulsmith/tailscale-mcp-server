@@ -1,0 +1,130 @@
+# Tailscale Model Context Protocol (MCP) Server
+
+A simple MCP server that provides read-only access to your Tailscale network directly from Claude Desktop and other MCP-compatible clients.
+
+## Description
+
+This server allows Claude to securely interact with your Tailscale network by exposing read-only commands as tools and prompts. It enables you to:
+
+- Check your Tailscale status and connected devices
+- Get network diagnostics
+- View your Tailscale IP addresses
+- List available exit nodes
+- Ping Tailscale hosts
+- Look up information about Tailscale IPs
+
+## Requirements
+
+- [Go](https://golang.org/doc/install) (for building from source)
+- [Tailscale CLI](https://tailscale.com/download) must be installed and accessible in your `$PATH`
+- An MCP-compatible client like Claude Desktop
+
+## Installation
+
+### Pre-built Binary
+
+Coming soon
+
+### Building from Source
+
+```bash
+go install github.com/paulsmith/tailscale-mcp@latest
+```
+
+## Using with Claude Desktop
+
+1. First, make sure you have [Claude Desktop](https://claude.ai/download) installed and updated to the latest version
+
+2. Open your Claude Desktop configuration file:
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+3. Add the Tailscale MCP server configuration:
+
+```json
+{
+  "mcpServers": {
+    "tailscale": {
+      "command": "/path/to/tailscale-mcp"
+    }
+  }
+}
+```
+
+4. Replace `/path/to/tailscale-mcp` with the actual path to the binary
+
+5. Restart Claude Desktop
+
+## Available Tools
+
+The server exposes the following tools:
+
+- **tailscale**: Run any safe Tailscale command
+- **get-ip**: Get your Tailscale IP addresses
+- **get-status**: Get information about your Tailscale network
+- **network-check**: Check Tailscale network connectivity
+- **list-exit-nodes**: List available Tailscale exit nodes
+- **ip-lookup**: Look up information about a Tailscale IP
+- **ping-host**: Ping a Tailscale host
+- **dns-status**: Get DNS diagnostic information
+
+## Available Prompts
+
+The server also includes several prompts to help with common tasks:
+
+- **diagnose-network**: Analyze Tailscale network connectivity issues
+- **analyze-peers**: Get a summary of devices in your tailnet
+- **exit-node-recommendations**: Get recommendations for exit nodes
+
+## Example Usage
+
+Once connected to Claude Desktop, you can ask questions like:
+
+- "What's my Tailscale IP address?"
+- "Show me all the devices connected to my Tailscale network"
+- "Can you check if my Tailscale network connection is working properly?"
+- "Ping my device called 'laptop'"
+- "Are there any exit nodes available in my network?"
+- "What DNS settings is Tailscale using?"
+
+## Security Notes
+
+- This server only allows read-only access to your Tailscale network
+- Only commands in the safe list are permitted
+- No configuration changes can be made
+- All commands are executed with your user's permissions
+
+## Troubleshooting
+
+### Server not appearing in Claude Desktop
+
+Check the following:
+1. Make sure the path to the binary in your configuration is correct
+2. Verify Tailscale CLI is installed and accessible in your `$PATH`
+3. Check Claude Desktop logs for errors:
+   - macOS: `~/Library/Logs/Claude/mcp*.log`
+   - Windows: `%APPDATA%\Claude\logs\mcp*.log`
+
+### Command errors
+
+If commands are failing, try:
+1. Running the command directly using the Tailscale CLI to verify it works
+2. Check that your Tailscale is correctly configured and connected
+3. Ensure the command is in the allowed safe list
+
+## Development
+
+This server is built using the MCP Go SDK. If you want to extend or modify it:
+
+1. Clone the repository
+2. Make your changes
+3. Build using `go build`
+4. Test with Claude Desktop or other MCP clients
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[MIT License](LICENSE)

@@ -1,0 +1,9 @@
+netcheck
+ip
+dns (status)
+status
+metrics
+ping (<peer>)
+version
+exit-node (list)
+whois (<ip>)
