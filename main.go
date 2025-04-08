@@ -41,6 +41,23 @@ func main() {
 	select {}
 }
 
+// findTailscaleBinary attempts to locate the tailscale binary, first checking PATH,
+// then looking for the bundled executable in Applications on macOS
+func findTailscaleBinary() (string, error) {
+	// First, try to find tailscale in PATH
+	path, err := exec.LookPath("tailscale")
+	if err == nil {
+		return path, nil
+	}
+
+	// On macOS, check the default application location
+	if _, err := os.Stat("/Applications/Tailscale.app/Contents/MacOS/Tailscale"); err == nil {
+		return "/Applications/Tailscale.app/Contents/MacOS/Tailscale", nil
+	}
+
+	return "", fmt.Errorf("tailscale binary not found in PATH or standard locations")
+}
+
 func addTailscaleTools(server *mcp.MCPServer) {
 	// Tool for running Tailscale command
 	runCommandSchema := json.RawMessage(`{
@@ -76,7 +93,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 			}
 
 			// Execute the command
-			cmd := exec.Command("tailscale", cmdArgs...)
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, cmdArgs...)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("command failed: %v\nOutput: %s", err, string(output))
@@ -91,7 +112,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 		"properties": {}
 	}`),
 		func(ctx context.Context, args map[string]interface{}) (string, error) {
-			cmd := exec.Command("tailscale", "ip")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, "ip")
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("failed to get Tailscale IP: %v", err)
@@ -131,7 +156,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 				cmdArgs = append(cmdArgs, "--json")
 			}
 
-			cmd := exec.Command("tailscale", cmdArgs...)
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, cmdArgs...)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("failed to get Tailscale status: %v", err)
@@ -145,7 +174,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 		"properties": {}
 	}`),
 		func(ctx context.Context, args map[string]interface{}) (string, error) {
-			cmd := exec.Command("tailscale", "netcheck")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, "netcheck")
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("network check failed: %v", err)
@@ -159,7 +192,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 		"properties": {}
 	}`),
 		func(ctx context.Context, args map[string]interface{}) (string, error) {
-			cmd := exec.Command("tailscale", "exit-node", "list")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, "exit-node", "list")
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("failed to list exit nodes: %v", err)
@@ -181,7 +218,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 		func(ctx context.Context, args map[string]interface{}) (string, error) {
 			ip := args["ip"].(string)
 
-			cmd := exec.Command("tailscale", "whois", ip)
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, "whois", ip)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("failed to look up IP %s: %v", ip, err)
@@ -214,7 +255,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 				cmdArgs = append(cmdArgs, "-c", fmt.Sprintf("%d", int(count)))
 			}
 
-			cmd := exec.Command("tailscale", cmdArgs...)
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, cmdArgs...)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("ping failed: %v\nOutput: %s", err, string(output))
@@ -228,7 +273,11 @@ func addTailscaleTools(server *mcp.MCPServer) {
 		"properties": {}
 	}`),
 		func(ctx context.Context, args map[string]interface{}) (string, error) {
-			cmd := exec.Command("tailscale", "dns", "status")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return "", err
+			}
+			cmd := exec.Command(tailscale, "dns", "status")
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return "", fmt.Errorf("failed to get DNS status: %v", err)
@@ -243,14 +292,18 @@ func addTailscalePrompts(server *mcp.MCPServer) {
 		[]mcp.PromptArgument{},
 		func(ctx context.Context, args map[string]interface{}) ([]mcp.PromptMessage, error) {
 			// Run netcheck command to gather data
-			cmd := exec.Command("tailscale", "netcheck")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return nil, err
+			}
+			cmd := exec.Command(tailscale, "netcheck")
 			netcheckOutput, err := cmd.CombinedOutput()
 			if err != nil {
 				return nil, fmt.Errorf("failed to run netcheck: %v", err)
 			}
 
 			// Get status data as well
-			cmd = exec.Command("tailscale", "status")
+			cmd = exec.Command(tailscale, "status")
 			statusOutput, err := cmd.CombinedOutput()
 			if err != nil {
 				return nil, fmt.Errorf("failed to get status: %v", err)
@@ -281,7 +334,11 @@ What does this information tell us about the Tailscale network connectivity? Are
 	server.Prompt("analyze-peers", "Get information about peers in your tailnet",
 		[]mcp.PromptArgument{},
 		func(ctx context.Context, args map[string]interface{}) ([]mcp.PromptMessage, error) {
-			cmd := exec.Command("tailscale", "status")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return nil, err
+			}
+			cmd := exec.Command(tailscale, "status")
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return nil, fmt.Errorf("failed to get peers: %v", err)
@@ -307,7 +364,11 @@ Can you provide a summary of the devices in my tailnet, their connection status,
 	server.Prompt("exit-node-recommendations", "Get recommendations for exit nodes",
 		[]mcp.PromptArgument{},
 		func(ctx context.Context, args map[string]interface{}) ([]mcp.PromptMessage, error) {
-			cmd := exec.Command("tailscale", "exit-node", "list")
+			tailscale, err := findTailscaleBinary()
+			if err != nil {
+				return nil, err
+			}
+			cmd := exec.Command(tailscale, "exit-node", "list")
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				return nil, fmt.Errorf("failed to list exit nodes: %v", err)
