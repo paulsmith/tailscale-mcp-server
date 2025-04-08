@@ -1,13 +1,23 @@
 # Tailscale Model Context Protocol (MCP) Server
 
-A simple [MCP](https://modelcontextprotocol.io/introduction) server that provides read-only access to your [Tailscale](https://tailscale.com/) network directly from Claude Desktop and other MCP-compatible clients.
+A simple [MCP](https://modelcontextprotocol.io/introduction) server that
+provides read-only access to your [Tailscale](https://tailscale.com/) network
+directly from Claude Desktop and other MCP-compatible clients.
 
 > [!CAUTION]
-> You might not want to do this! This server exposes your Tailscale network to an external application. While it is intended to be read-only and secure, you should be aware of the potential risks involved in exposing any part of your network to third-party applications. [Especially when interacting with LLMs](https://simonwillison.net/search/?tag=prompt-injection).
+> You might not want to do this! This server exposes your Tailscale network to
+> an external application. It invokes the `tailscale` binary on your system on
+> your behalf, assembling an argument list through string concatenation, and
+> executing as your logged-in Tailscale account. While its operation is
+> intended to be read-only and therefore "secure", you should be aware of the
+> potential risks involved in exposing any part of your network to third-party
+> applications. [Especially when interacting with
+> LLMs](https://simonwillison.net/search/?tag=prompt-injection).
 
 ## Description
 
-This server allows, for example, Claude to interact with your Tailscale network by exposing read-only commands as tools and prompts. It enables you to:
+This server allows, for example, Claude to interact with your Tailscale network
+by exposing read-only commands as tools and prompts. It enables you to:
 
 - Check your Tailscale status and connected devices
 - Get network diagnostics
@@ -19,7 +29,8 @@ This server allows, for example, Claude to interact with your Tailscale network 
 ## Requirements
 
 - [Go](https://golang.org/doc/install) (for building from source)
-- [Tailscale CLI](https://tailscale.com/download) must be installed and accessible in your `$PATH`
+- [Tailscale CLI](https://tailscale.com/download) must be installed and
+  accessible in your `$PATH`
 - An MCP-compatible client like Claude Desktop
 
 ## Installation
@@ -36,7 +47,8 @@ go install github.com/paulsmith/tailscale-mcp@latest
 
 ## Using with Claude Desktop
 
-1. First, make sure you have [Claude Desktop](https://claude.ai/download) installed and updated to the latest version
+1. First, make sure you have [Claude Desktop](https://claude.ai/download)
+   installed and updated to the latest version
 
 2. Open your Claude Desktop configuration file:
    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -92,10 +104,13 @@ Once connected to Claude Desktop, you can ask questions like:
 
 ## Security Notes
 
-- This server only allows read-only access to your Tailscale network
-- Only commands in the safe list are permitted
-- No configuration changes can be made
+- This server allows read-only access to your Tailscale network
+- Only subcommands of the `tailscale` CLI in the "safe" whitelist are permitted
+- No configuration changes can be made (in theory!)
 - All commands are executed with your user's permissions
+- You are exposing your Tailscale network to an LLM, however indirectly via the
+  MCP RPC, which is subject to security risks such as prompt injection -
+  educate yourself
 
 ## Troubleshooting
 
@@ -126,7 +141,8 @@ This server is built using the MCP Go SDK. If you want to extend or modify it:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to open an issue and/or submit a
+pull request.
 
 ## License
 
