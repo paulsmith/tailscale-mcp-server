@@ -215,7 +215,8 @@ If commands are failing, try:
 
 ## Development
 
-This server is built using the MCP Go SDK. If you want to extend or modify it:
+This server is built using the [mcp-go](https://github.com/paulsmith/mcp-go)
+package. If you want to extend or modify it:
 
 1. Clone the repository
 2. Make your changes
